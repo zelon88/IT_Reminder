@@ -1,0 +1,17 @@
+COMMIT - 2/6/2020
+v2.1 - Review & revise codebase for open-source release.
+
+-No secrets remaining.
+
+--------------------
+COMMIT - 6/4/2019
+v1.9 - Fix errors with conhost.exe and sendmail.exe zombie processes.
+
+-Fix bugs.
+-Add company abbreviation, toEmail, fromEmail variables instead of hard-coding.
+
+--------------------
+COMMIT - 3/11/2019
+v1.8 - Sync codebase.
+
+--------------------
