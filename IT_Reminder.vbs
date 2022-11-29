@@ -1,5 +1,5 @@
 'File Name: IT_Reminder.vbs
-'Version: v2.1, 2/6/2020
+'Version: v2.2, 11/25/2022
 'Author: Justin Grimes, 7/16/2018
 
 '--------------------------------------------------
@@ -13,7 +13,7 @@
 'Global variable definitions used in this script.
 Option Explicit
 dim strComputer, param1, objFSO, objWMIService, arg, objNet, objShell, strComputerName, strUserName, timeStamp, objExcel, _
-mailFile, logFile, cacheFile, checkArr(19,2), cacheDir, checkFile, checkFrequency, today, maxAge, strNotes, _
+mailFile, logFile, cacheFile, checkArr(27,2), cacheDir, checkFile, checkFrequency, today, maxAge, strNotes, appDir, _
 dFileMod, triggerEmail, writeFile, checkDataFile, dataFile, data, mFile, dataDir, maintDir, check, counter, _
 checkFile1, checkFile2, appexcel, wb, maintFile, objWorkbook, r, stat, dateDue, companyAbbr, toEmail, fromEmail
 '--------------------------------------------------
@@ -23,12 +23,13 @@ checkFile1, checkFile2, appexcel, wb, maintFile, objWorkbook, r, stat, dateDue, 
 counter = 0
 strComputer = "."
 param1 = checkDataFile = strNotes = dataFile = ""
-cacheDir = "\\Server\Scripts\IT_Reminder\Cache"
-dataDir = "\\Server\Scripts\IT_Reminder\Data"
-maintDir = "\\Server\IT\IT Resources\Maintenance"
-companyAbbr = "Company"
-toEmail = "IT@Company.com"
-fromEmail = "Server@Company.com"
+appDir = "\\server\Scripts\IT_Reminder\"
+cacheDir = appDir&"Cache"
+dataDir = appDir&"Data"
+maintDir = "\\server\Maintenance"
+companyAbbr = "TCI"
+toEmail = "HelpDesk@thecompany.com"
+fromEmail = "HelpDesk@thecompany.com"
 today = Date
 timeStamp = Now
 maxAge = 0
@@ -39,7 +40,7 @@ Set objNet = CreateObject("Wscript.Network")
 Set objShell = WScript.CreateObject("WScript.Shell")
 strComputerName = objShell.ExpandEnvironmentStrings("%COMPUTERNAME%")
 strUserName = objShell.ExpandEnvironmentStrings("%USERNAME%")
-mailFile = "Warning.mail"
+mailFile = appDir&"Warning.mail"
 '--------------------------------------------------
 
 '--------------------------------------------------
@@ -64,56 +65,80 @@ checkArr(2,1) = "DAILY"
 checkArr(3,0) = "DAILY_MAINT_ITEM_4"
 checkArr(3,1) = "DAILY"
 'This check is for . . .
-checkArr(4,0) = "WEEKLY_MAINT_ITEM_1"
-checkArr(4,1) = "WEEKLY"
+checkArr(4,0) = "TWODAYS_MAINT_ITEM_1"
+checkArr(4,1) = "TWODAYS"
 'This check is for . . .
-checkArr(5,0) = "WEEKLY_MAINT_ITEM_2"
-checkArr(5,1) = "WEEKLY"
+checkArr(5,0) = "TWODAYS_MAINT_ITEM_2"
+checkArr(5,1) = "TWODAYS"
 'This check is for . . .
-checkArr(6,0) = "WEEKLY_MAINT_ITEM_3"
-checkArr(6,1) = "WEEKLY"
+checkArr(6,0) = "TWODAYS_MAINT_ITEM_3"
+checkArr(6,1) = "TWODAYS"
 'This check is for . . .
-checkArr(7,0) = "WEEKLY_MAINT_ITEM_4"
-checkArr(7,1) = "WEEKLY"
+checkArr(7,0) = "TWODAYS_MAINT_ITEM_4"
+checkArr(7,1) = "TWODAYS"
 'This check is for . . .
-checkArr(8,0) = "MONTHLY_MAINT_ITEM_1"
-checkArr(8,1) = "MONTHLY"
+checkArr(8,0) = "THREEDAYS_MAINT_ITEM_1"
+checkArr(8,1) = "THREEDAYS"
 'This check is for . . .
-checkArr(9,0) = "MONTHLY_MAINT_ITEM_2"
-checkArr(9,1) = "MONTHLY"
+checkArr(9,0) = "THREEDAYS_MAINT_ITEM_2"
+checkArr(9,1) = "THREEDAYS"
 'This check is for . . .
-checkArr(10,0) = "MONTHLY_MAINT_ITEM_3"
-checkArr(10,1) = "MONTHLY"
+checkArr(10,0) = "THREEDAYS_MAINT_ITEM_3"
+checkArr(10,1) = "THREEDAYS"
 'This check is for . . .
-checkArr(11,0) = "MONTHLY_MAINT_ITEM_4"
-checkArr(11,1) = "MONTHLY"
+checkArr(11,0) = "THREEDAYS_MAINT_ITEM_4"
+checkArr(11,1) = "THREEDAYS"
 'This check is for . . .
-checkArr(12,0) = "MONTHLY_MAINT_ITEM_5"
-checkArr(12,1) = "MONTHLY"
+checkArr(12,0) = "WEEKLY_MAINT_ITEM_1"
+checkArr(12,1) = "WEEKLY"
 'This check is for . . .
-checkArr(13,0) = "MONTHLY_MAINT_ITEM_6"
-checkArr(13,1) = "MONTHLY"
+checkArr(13,0) = "WEEKLY_MAINT_ITEM_2"
+checkArr(13,1) = "WEEKLY"
 'This check is for . . .
-checkArr(14,0) = "MONTHLY_MAINT_ITEM_7"
-checkArr(14,1) = "MONTHLY"
+checkArr(14,0) = "WEEKLY_MAINT_ITEM_3"
+checkArr(14,1) = "WEEKLY"
 'This check is for . . .
-checkArr(15,0) = "MONTHLY_MAINT_ITEM_8"
-checkArr(15,1) = "MONTHLY"
+checkArr(15,0) = "WEEKLY_MAINT_ITEM_4"
+checkArr(15,1) = "WEEKLY"
 'This check is for . . .
-checkArr(16,0) = "MONTHLY_MAINT_ITEM_9"
+checkArr(16,0) = "MONTHLY_MAINT_ITEM_1"
 checkArr(16,1) = "MONTHLY"
 'This check is for . . .
-checkArr(17,0) = "YEARLY_MAINT_ITEM_1"
-checkArr(17,1) = "YEARLY"
+checkArr(17,0) = "MONTHLY_MAINT_ITEM_2"
+checkArr(17,1) = "MONTHLY"
 'This check is for . . .
-checkArr(18,0) = "YEARLY_MAINT_ITEM_2"
-checkArr(18,1) = "YEARLY"
+checkArr(18,0) = "MONTHLY_MAINT_ITEM_3"
+checkArr(18,1) = "MONTHLY"
+'This check is for . . .
+checkArr(19,0) = "MONTHLY_MAINT_ITEM_4"
+checkArr(19,1) = "MONTHLY"
+'This check is for . . .
+checkArr(20,0) = "MONTHLY_MAINT_ITEM_5"
+checkArr(20,1) = "MONTHLY"
+'This check is for . . .
+checkArr(21,0) = "MONTHLY_MAINT_ITEM_6"
+checkArr(21,1) = "MONTHLY"
+'This check is for . . .
+checkArr(22,0) = "MONTHLY_MAINT_ITEM_7"
+checkArr(22,1) = "MONTHLY"
+'This check is for . . .
+checkArr(23,0) = "MONTHLY_MAINT_ITEM_8"
+checkArr(23,1) = "MONTHLY"
+'This check is for . . .
+checkArr(24,0) = "MONTHLY_MAINT_ITEM_9"
+checkArr(24,1) = "MONTHLY"
+'This check is for . . .
+checkArr(25,0) = "YEARLY_MAINT_ITEM_1"
+checkArr(25,1) = "YEARLY"
+'This check is for . . .
+checkArr(26,0) = "YEARLY_MAINT_ITEM_2"
+checkArr(26,1) = "YEARLY"
 '--------------------------------------------------
 
 '--------------------------------------------------
 'A funciton for running SendMail.
-Function SendEmail() 
-  objShell.run "sendmail.exe " & mailFile
+Function SendEmail(appDir, mailFile)
+  objShell.run appDir&"sendmail.exe " & mailFile
 End Function
 '--------------------------------------------------
 
@@ -166,6 +191,12 @@ If (param1 = "-t") Then
       'Set the maxAge if the current check is to be performed daily.
       If (checkFrequency = "DAILY") Then
         maxAge = 1
+      'Set the maxAge if the current check is to be performed every 2 days.
+      If (checkFrequency = "TWODAYS") Then
+        maxAge = 2
+      'Set the maxAge if the current check is to be performed every 3 days.
+      If (checkFrequency = "THREEDAYS") Then
+        maxAge = 3
       End If
       'Set the maxAge if the current check is to be performed weekly.
       If (checkFrequency = "WEEKLY") Then
@@ -191,13 +222,13 @@ If (param1 = "-t") Then
       data = dataFile.ReadAll
       dataFile.Close
       Set mFile = objFSO.CreateTextFile(mailFile, TRUE, FALSE)  
-      mFile.Write "To: " & toEmail & vbNewLine & "From: " & fromEmail & vbNewLine & "Subject: " & companyAbbr & " IT Reminder, " & _
-       checkArr(counter,0) & "!!!" & vbNewLine & data & vbNewLine & vbNewLine & _
+      mFile.Write "To: " & toEmail & VBNewLine & "From: " & fromEmail & VBNewLine & "Subject: " & companyAbbr & " IT Reminder, " & _
+       checkArr(counter,0) & "!!!" & VBNewLine & data & VBNewLine & VBNewLine & _
        "This reminder was generated by " & strComputerName & " and is run once per day." & _
-       vbNewLine & vbNewLine & "Script: ""IT_Reminder.vbs""" 
+       VBNewLine & VBNewLine & "Script: ""IT_Reminder.vbs""" 
       mFile.Close
       Wscript.Sleep(1000)
-      sendEmail()
+      SendEmail appDir, mailFile
       triggerEmail = FALSE
     End If
     counter = counter + 1
@@ -253,9 +284,9 @@ If (param1 <> "-t") And (param1 <> "-u") And (param1 <> "-s") Then
       dataFile.Close
       'Throw a dialogue box to gather user input for the notes column of the maintenance record spreadsheet.
       MsgBox data, 64, checkArr(counter,0)
-      strNotes = InputBox(checkArr(counter,0) & VBNewLine & vbNewLine & "Please perform the specified " & _
-       "maintenance and enter your notes below." & VBNewLine & vbNewLine & "You MUST leave a note to mark this " & _
-       "maintanence complete." & vbNewLine, checkArr(counter,0))
+      strNotes = InputBox(checkArr(counter,0) & VBNewLine & VBNewLine & "Please perform the specified " & _
+       "maintenance and enter your notes below." & VBNewLine & VBNewLine & "You MUST leave a note to mark this " & _
+       "maintanence complete." & VBNewLine, checkArr(counter,0))
       If strNotes <> "" Then 
         'Recreate the cache file if it already exists.
         If objFSO.FileExists(checkFile) Then
@@ -364,8 +395,8 @@ If (param1 = "-u") Then
       stat = "Current"
       dateDue = DateAdd("d", maxAge, dFileMod)
     End If
-    MsgBox checkArr(counter,0) & " - " & checkArr(counter, 1) & VBNewLine & VBNewLine & "Interval: " & checkArr(counter, 1) & vbNewLine & _
-     "Status: " & stat & vbNewLine & "Last Completion Date: " & dFileMod & VBNewLine & "Next Due Date: " & dateDue & vbNewLine & vbNewLine, 64, companyAbbr & " IT Reminders"
+    MsgBox checkArr(counter,0) & " - " & checkArr(counter, 1) & VBNewLine & VBNewLine & "Interval: " & checkArr(counter, 1) & VBNewLine & _
+     "Status: " & stat & VBNewLine & "Last Completion Date: " & dFileMod & VBNewLine & "Next Due Date: " & dateDue & VBNewLine & VBNewLine, 64, companyAbbr & " IT Reminders"
     counter = counter + 1
   Next
 End If
